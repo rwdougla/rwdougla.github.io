@@ -11,5 +11,5 @@ A tool for cleaning and colorizing your minutes, suitable for WG21's internal wi
 
 [Source](https://github.com/rwdougla/wg21links)
 
-A chrome extension for turning stable names and paper numbers found on html pages in your browser, into links to wg21.link
+A chrome extension for turning stable names to links to eel.is and paper numbers or issue names to links to wg21.link
 
