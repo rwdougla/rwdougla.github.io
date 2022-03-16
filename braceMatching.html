@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<header>
+<style type="text/css">
+    body {
+		background: #002b36;
+		font-family: "Courier";
+		color: #cb4b16;
+	}
+	a:link {color:#268bd2;}
+	a:visited {color:#d33682;}
+	.compact { margin-top: 1px, margin-bottom: 1px; }
+</style>
+</header>
+<body>
+<input type="button" id="btn_run" onclick="cleanupText();" value="Clean Output:">
+<br>
+<textarea id="textarea" name="code" cols="160" rows="40" wrap="off"></textarea>
+<center>
+
+<script>
+	function log(str)
+	{
+		//console.log(str);
+	}
+	function cleanupText()
+	{
+		var ta = document.getElementById("textarea");
+		var oldText = ta.value;
+		
+		var braceOpen = /[\[\{\<]/g;
+		var braceClosed = /[\]\}\>]/g;
+		var commaRegExp = /[\,]/g;
+		
+		var newText = '';
+		
+		var indentLevel = 0;
+		var lastIndex = 0;
+		log('searching');
+		
+		var nextBraceOpen = braceOpen.exec(oldText);
+		var nextBraceClosed = braceClosed.exec(oldText);
+		var nextComma = commaRegExp.exec(oldText);
+		
+		for (nextIndex = 0; nextIndex < oldText.length; )
+		{
+			lastIndex = nextIndex;
+			
+			var logStr = ''
+			if (nextBraceOpen) logStr += nextBraceOpen.index;
+			if (nextBraceClosed) logStr += nextBraceClosed.index;
+			if (nextComma) logStr += nextComma.index;
+			log(logStr);
+			
+			if (isMin(nextComma, nextBraceOpen, nextBraceClosed))
+			{
+				log('match to comma');
+				var toInsert = endlineForIndent(indentLevel);
+				nextIndex = nextComma.index + 1;			
+				newText = newText + oldText.substring(lastIndex, nextIndex) + toInsert;
+				nextComma = commaRegExp.exec(oldText);
+			}
+			else if (isMin(nextBraceOpen, nextComma, nextBraceClosed))
+			{
+				log('match to open');
+				++indentLevel;
+				nextIndex = nextBraceOpen.index + 1;
+				var toInsert = endlineForIndent(indentLevel);
+				newText = newText + oldText.substring(lastIndex, nextIndex) + toInsert;
+				nextBraceOpen = braceOpen.exec(oldText);
+			}
+			else if (nextBraceClosed && nextBraceClosed.index >= 0)
+			{
+				log('match to closed');
+				if (indentLevel > 0)
+				{
+					--indentLevel;
+					nextIndex = nextBraceClosed.index;
+					var toInsert = endlineForIndent(indentLevel);
+					newText = newText + oldText.substring(lastIndex, nextIndex) + toInsert;
+				}
+				else
+				{
+					nextIndex = nextBraceClosed.index + 1;
+					newText = newText + oldText.substring(lastIndex, nextIndex);
+				}
+				nextBraceClosed = braceClosed.exec(oldText);
+			}
+			else
+			{
+				log('no match');
+				newText = newText + oldText.substring(nextIndex, oldText.length);
+				nextIndex = oldText.length;
+			}
+		}
+
+		ta.value = newText;
+	}
+	function isMin(a, b, c)
+	{
+		return a
+			&& (!b || a.index <= b.index)
+			&& (!c || a.index <= c.index);
+	}
+	function endlineForIndent(indent)
+	{
+		var result = '\n';
+		for (i = 0; i < indent; ++i)
+			result = result + '\t';
+		return result;
+	}
+
+	
+</script>
+
+</body>
+
+</html>
