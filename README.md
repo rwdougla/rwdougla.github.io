@@ -13,3 +13,8 @@ A tool for cleaning and colorizing your minutes, suitable for WG21's internal wi
 
 A chrome extension for turning stable names to links to eel.is and paper numbers or issue names to links to wg21.link
 
+# Other
+
+[Brace Matching](braceMatching.html)
+
+A simplistic tool which adds whitespace to make braces line up, visually.
